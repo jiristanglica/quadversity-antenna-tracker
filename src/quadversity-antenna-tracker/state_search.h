@@ -1,0 +1,63 @@
+#ifndef STATE_SEARCH_H
+#define STATE_SEARCH_H
+
+
+#include "state.h"
+#include "sensors.h"
+
+#define PEAK_LOOKAHEAD 4
+
+
+namespace StateMachine {
+    class SearchStateHandler : public StateMachine::StateHandler {
+        private:
+            enum class ScanDirection : int8_t {
+                SCANUP = 1,
+                SCANDOWN = -1
+            };
+
+
+            bool scanning = false;
+            ScanDirection direction = ScanDirection::SCANUP;
+            bool forceNext = false;
+
+            bool scanningPeak = false;
+            uint8_t peakChannelIndex = 0;
+            uint8_t peaks[PEAK_LOOKAHEAD] = { 0 };
+
+            bool menuShowing = true;
+
+            void onUpdateAuto();
+
+            void drawBorders();
+            void drawChannelText();
+            void drawFrequencyText();
+            void drawRssiGraph();
+            void drawVoltage();
+            void drawActiveReceiver();
+
+            void setChannel();
+
+        public:
+            enum class ScanOrder : uint8_t {
+                FREQUENCY,
+                CHANNEL
+            };
+
+
+            bool manual = false;
+            ScanOrder order = ScanOrder::FREQUENCY;
+            uint8_t orderedChanelIndex = 0;
+
+            void onEnter();
+            void onUpdate();
+
+            void onInitialDraw();
+            void onUpdateDraw();
+
+            void onButtonChange(Button button, Buttons::PressType pressType);
+    };
+}
+
+
+#endif
